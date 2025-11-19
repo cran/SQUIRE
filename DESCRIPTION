@@ -1,0 +1,24 @@
+Package: SQUIRE
+Type: Package
+Title: Statistical Quality-Assured Integrated Response Estimation
+Version: 1.0.0
+Authors@R: 
+    person("Richard A.", "Feiss", 
+           email = "feiss026@umn.edu", 
+           role = c("aut", "cre"), 
+           comment = c(ORCID = "0009-0008-0409-6042"))
+Author: Richard A. Feiss [aut, cre] (ORCID:
+    <https://orcid.org/0009-0008-0409-6042>)
+Maintainer: Richard A. Feiss <feiss026@umn.edu>
+Description: Implements statistically validated biological parameter optimization that combines automated parameter type detection with rigorous statistical quality assurance. Unlike conventional optimizers that fit parameters to any data, 'SQUIRE' first validates whether statistically significant biological effects exist before proceeding with parameter estimation. Uses trust region methods from Conn et al. (2000) <doi:10.1137/S1052623497325107>, ANOVA-based validation following Fisher (1925) <doi:10.1007/978-1-4612-4380-9_6>, and effect size calculations per Cohen (1988, ISBN:0805802835). Automatically distinguishes rate-based, positive-constrained, and unconstrained variables, applying geometry-appropriate optimization methods while preventing over-fitting to noise through built-in statistical validation, effect size assessment, and data quality requirements. Designed for complex biological and environmental models including germination studies, dose-response curves, and survival analysis. Enhanced successor to the 'GALAHAD' optimization framework with integrated statistical gatekeeping. Developed at the Minnesota Center for Prion Research and Outreach at the University of Minnesota.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Depends: R (>= 4.2.0)
+Imports: stats
+Suggests: testthat (>= 3.0.0)
+RoxygenNote: 7.3.3
+Config/testthat/edition: 3
+NeedsCompilation: no
+Packaged: 2025-11-14 00:12:06 UTC; feiss026
+Repository: CRAN
+Date/Publication: 2025-11-19 18:00:02 UTC
