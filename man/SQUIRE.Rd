@@ -8,11 +8,9 @@ SQUIRE(
   data,
   treatments,
   control_treatment = treatments[1],
-  response_type = c("germination", "growth", "survival"),
   validation_level = 0.05,
   min_timepoints = 5,
   min_replicates = 3,
-  galahad_config = NULL,
   verbose = TRUE
 )
 }
@@ -23,83 +21,50 @@ SQUIRE(
 
 \item{control_treatment}{Name of control treatment for comparisons}
 
-\item{response_type}{Type of response: "germination", "growth", "survival"}
-
 \item{validation_level}{Statistical significance level (default: 0.05)}
 
 \item{min_timepoints}{Minimum timepoints required for fitting (default: 5)}
 
 \item{min_replicates}{Minimum replicates per treatment (default: 3)}
 
-\item{galahad_config}{Optional pre-calibrated GALAHAD parameters}
-
 \item{verbose}{Logical, print progress messages}
 }
 \value{
-List with statistical validation results, optimized parameters,
-and biological interpretation (only if statistically justified)
+List with validation results, systematic GALAHAD discovery, and final parameters
 }
 \description{
-Geometry-adaptive biological parameter estimation with built-in
-statistical validation. Implements two-cycle optimization: statistical
-validation followed by GALAHAD-calibrated parameter estimation.
-}
-\details{
-SQUIRE implements a two-stage validation process:
-
-\strong{Stage 1: Statistical Validation}
-\itemize{
-\item Tests for significant treatment effects using ANOVA
-\item Checks data quality requirements (timepoints, replication)
-\item Only proceeds to optimization if biological signals detected
-}
-
-\strong{Stage 2: Validated Optimization}
-\itemize{
-\item Calibrates GALAHAD geometry parameters on significant effects
-\item Applies optimized parameters with uncertainty quantification
-\item Validates that optimized parameters are statistically meaningful
-}
+Systematic adaptive GALAHAD framework:
+  1. Statistical validation
+  2. Systematic T->P->E geometry discovery (3 focused runs)
+  3. Final optimization with discovered optimal settings
+  4. Done!
 }
 \examples{
-# Quick data setup example (fast execution)
-n_time <- 5
-n_rep <- 3
-
-# Simulate example data
-example_data <- data.frame(
-  time = rep(1:n_time, times = 3 * n_rep),
-  treatment = rep(c("Control", "Treatment_A", "Treatment_B"), 
-                  each = n_time * n_rep),
-  replicate = rep(rep(1:n_rep, each = n_time), times = 3),
+\donttest{
+# Synthetic germination data for demonstration
+test_data <- data.frame(
+  time = rep(c(0, 1, 2, 3, 4, 5, 6, 7), times = 12),
+  treatment = rep(c("Control", "Contaminant_A", "Contaminant_B"), each = 32),
+  replicate = rep(rep(1:4, each = 8), times = 3),
   response = c(
-    cumsum(rbinom(n_time * n_rep, 1, 0.1)),  # Control
-    cumsum(rbinom(n_time * n_rep, 1, 0.15)), # Treatment A  
-    cumsum(rbinom(n_time * n_rep, 1, 0.2))   # Treatment B
+    0, 5, 15, 28, 45, 62, 75, 82,    # Control
+    0, 4, 12, 26, 43, 60, 73, 80,
+    0, 6, 17, 30, 47, 64, 77, 84,
+    0, 5, 14, 27, 44, 61, 74, 81,
+    0, 2, 8, 18, 32, 48, 60, 68,     # Contaminant_A
+    0, 3, 7, 16, 30, 46, 58, 66,
+    0, 2, 9, 19, 34, 50, 62, 70,
+    0, 3, 8, 17, 31, 47, 59, 67,
+    0, 8, 22, 38, 55, 72, 85, 92,    # Contaminant_B
+    0, 7, 20, 36, 53, 70, 83, 90,
+    0, 9, 24, 40, 57, 74, 87, 94,
+    0, 8, 21, 37, 54, 71, 84, 91
   )
 )
 
-# Inspect data structure (this runs quickly)
-head(example_data)
-table(example_data$treatment)
-
-\donttest{
-# Full analysis (longer computation)
-results <- SQUIRE(
-  data = example_data,
-  treatments = c("Control", "Treatment_A", "Treatment_B"),
-  control_treatment = "Control",
-  response_type = "germination",
-  verbose = FALSE
-)
-
-# Check results
-if(results$optimization_performed) {
-  print("Optimization was justified")
-  print(results$parameters)
-} else {
-  print("No significant effects detected")
-  print(results$statistical_advice)
+result <- SQUIRE(test_data, c("Control", "Contaminant_A", "Contaminant_B"))
+if (result$optimization_performed) {
+  print(result$parameters$parameter_matrix)
 }
 }
 
